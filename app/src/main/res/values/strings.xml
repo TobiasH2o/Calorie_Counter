@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Calorie Counter</string>
+    <string name="newItem">Add New Item</string>
+    <string name="productID">Produtc ID: %1$s</string>
+</resources>
