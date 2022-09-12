@@ -141,13 +141,20 @@
         android:layout_width="162dp"
         android:layout_height="48dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
         android:ems="10"
         android:hint="@string/portionSizeInput"
         android:importantForAutofill="no"
         android:inputType="numberDecimal"
         android:textColorHint="#757575"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/portionValue"
         app:layout_constraintTop_toBottomOf="@+id/surfaceView" />
+
+    <TextView
+        android:id="@+id/portionValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/portionSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/portionSize" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

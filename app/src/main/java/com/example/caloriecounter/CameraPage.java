@@ -42,6 +42,7 @@ public class CameraPage extends AppCompatActivity {
     private TextView proteinLabel;
     private TextView fatLabel;
     private TextView carbLabel;
+    private TextView portionUnitLabel;
 
     private ProgressBar loadingSymbol;
 
@@ -64,6 +65,7 @@ public class CameraPage extends AppCompatActivity {
         fatLabel = requireViewById(R.id.proteinLabel);
         carbLabel = requireViewById(R.id.carbLabel);
         loadingSymbol = requireViewById(R.id.progressBar);
+        portionUnitLabel = requireViewById(R.id.portionValue);
         initialiseDetectorsAndSources();
 
         APIQuery apiQuery = new APIQuery("5000168022451");
@@ -167,6 +169,7 @@ public class CameraPage extends AppCompatActivity {
         proteinLabel.setText(String.format(getString(R.string.proteinLabel), String.valueOf(selectedProduct.getProtein())));
         fatLabel.setText(String.format(getString(R.string.fatLabel), String.format(String.valueOf(selectedProduct.getFat()), "%")));
         carbLabel.setText(String.format(getString(R.string.carbLabel), String.valueOf(selectedProduct.getCarbs())));
+        portionUnitLabel.setText(selectedProduct.getPortionUnit());
     }
 
 

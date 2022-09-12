@@ -4,6 +4,7 @@ public class Product {
 
     private String ID;
     private String name;
+    private String portionUnit;
     private int calories;
     private double protein;
     private double fat;
@@ -23,6 +24,14 @@ public class Product {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPortionUnit(){
+        return portionUnit;
+    }
+
+    public void setPortionUnit(String portionUnit){
+        this.portionUnit = portionUnit;
     }
 
     public int getCalories() {

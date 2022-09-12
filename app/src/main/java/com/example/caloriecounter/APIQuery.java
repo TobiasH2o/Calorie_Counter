@@ -41,6 +41,7 @@ public class APIQuery extends Thread{
             selectedProduct.setProtein(nutriments.getDouble("proteins_100g"));
             selectedProduct.setFat(nutriments.getDouble("fat_100g"));
             selectedProduct.setCarbs(nutriments.getDouble("carbohydrates_100g"));
+            selectedProduct.setPortionUnit(nutriments.getString(""));
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }finally{
