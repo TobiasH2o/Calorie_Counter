@@ -1,9 +1,5 @@
 package com.example.caloriecounter;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
@@ -12,31 +8,46 @@ import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.Buffer;
 
 public class CameraPage extends AppCompatActivity {
 
-    private SurfaceView surfaceView;
-    private BarcodeDetector barcodeDetector;
-    private CameraSource cameraSource;
     private static final int REQUEST_CAMERA_PERMISSION = 201;
+
+    private SurfaceView surfaceView;
+
+    private BarcodeDetector barcodeDetector;
+
+    private CameraSource cameraSource;
+
     private ToneGenerator toneGen1;
+
     private TextView barcodeText;
+    private TextView productNameLabel;
+    private TextView calorieLabel;
+    private TextView proteinLabel;
+    private TextView fatLabel;
+    private TextView carbLabel;
+
+    private ProgressBar loadingSymbol;
+
     private String barcodeData;
+
+    private Product selectedProduct;
 
 
 
@@ -47,7 +58,26 @@ public class CameraPage extends AppCompatActivity {
         toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
         surfaceView = requireViewById(R.id.surfaceView);
         barcodeText = requireViewById(R.id.barcodeText);
+        productNameLabel = requireViewById(R.id.productNameLabel);
+        calorieLabel = requireViewById(R.id.calorieLabel);
+        proteinLabel = requireViewById(R.id.fatLabel);
+        fatLabel = requireViewById(R.id.proteinLabel);
+        carbLabel = requireViewById(R.id.carbLabel);
+        loadingSymbol = requireViewById(R.id.progressBar);
         initialiseDetectorsAndSources();
+
+        APIQuery apiQuery = new APIQuery("5000168022451");
+        loadingSymbol.setVisibility(View.VISIBLE);
+        apiQuery.start();
+        try {
+            apiQuery.join();
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
+        loadingSymbol.setVisibility(View.INVISIBLE);
+        selectedProduct = apiQuery.getProduct();
+        updateLabels();
+
     }
 
 
@@ -93,6 +123,7 @@ public class CameraPage extends AppCompatActivity {
 
 
         barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
+
             @Override
             public void release() {
                 Toast.makeText(getApplicationContext(), "To prevent memory leaks barcode scanner has been stopped", Toast.LENGTH_SHORT).show();
@@ -111,31 +142,31 @@ public class CameraPage extends AppCompatActivity {
                             barcodeText.setText(String.format(getString(R.string.productID), barcodeData));
                             toneGen1.startTone(ToneGenerator.TONE_CDMA_PIP, 300);
 
-                            Thread apiQueryThread = new Thread(() -> {
-                                try {
-                                    URLConnection connection = new URL("https://world.openfoodfacts.org/api/v0/product/" + barcodeData + ".json").openConnection();
-                                    BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                                    StringBuilder content = new StringBuilder();
-                                    String line;
-                                    while((line = br.readLine()) != null){
-                                        content.append(line + "\n");
-                                    }
-                                    String value = content.toString();
-                                    br.close();
-                                    System.out.println(content);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            });
-
-                            apiQueryThread.start();
-
+                            APIQuery apiQuery = new APIQuery(barcodeData);
+                            loadingSymbol.setVisibility(View.VISIBLE);
+                            apiQuery.start();
+                            try {
+                                apiQuery.join();
+                            }catch(InterruptedException e){
+                                e.printStackTrace();
+                            }
+                            loadingSymbol.setVisibility(View.INVISIBLE);
+                            selectedProduct = apiQuery.getProduct();
+                            updateLabels();
                         }
                     });
 
                 }
             }
         });
+    }
+
+    public void updateLabels(){
+        productNameLabel.setText(String.format(getString(R.string.productNameLabelString), selectedProduct.getName()));
+        calorieLabel.setText(String.format(getString(R.string.calorieLabel), String.valueOf(selectedProduct.getCalories())));
+        proteinLabel.setText(String.format(getString(R.string.proteinLabel), String.valueOf(selectedProduct.getProtein())));
+        fatLabel.setText(String.format(getString(R.string.fatLabel), String.format(String.valueOf(selectedProduct.getFat()), "%")));
+        carbLabel.setText(String.format(getString(R.string.carbLabel), String.valueOf(selectedProduct.getCarbs())));
     }
 
 

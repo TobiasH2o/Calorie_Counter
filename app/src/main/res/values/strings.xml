@@ -1,5 +1,13 @@
 <resources>
     <string name="app_name">Calorie Counter</string>
     <string name="newItem">Add New Item</string>
-    <string name="productID">Produtc ID: %1$s</string>
+    <string name="productID">Product ID: %1$s</string>
+    <string name="confirmFood">Confirm Food</string>
+    <string name="productNameLabelString">Product: %1$s</string>
+    <string name="calorieLabel">Calories: %1$s</string>
+    <string name="proteinLabel">Protein: %1$s</string>
+    <string name="fatLabel">Fat: %1$s</string>
+    <string name="carbLabel">Carbohydrates: %1$s</string>
+    <string name="portionSize">Portion Size:</string>
+    <string name="portionSizeInput">Portion Size</string>
 </resources>
